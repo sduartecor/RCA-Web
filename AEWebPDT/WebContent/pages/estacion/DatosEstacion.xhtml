@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<ui:composition template="/layout/layout.xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui">
+	
+	<ui:define name="title">
+		<c:set var="title" value="Datos de Estacion" scope="request" />
+	</ui:define>
+	
+	<ui:define name="content">
+			 
+		<f:metadata>	
+		    <f:viewParam name="id" value="#{gestionEstacion.id}" />
+		    <f:viewParam name="modalidad" value="#{gestionEstacion.modalidad}" />
+		    <f:event type="preRenderView" listener="#{gestionEstacion.preRenderViewListener()}"/>
+		</f:metadata>
+
+	<h:form id="idDatosEstacion" >
+		 
+
+    		<h:commandButton id="idVolver" immediate="true" value="Volver al listado" onclick="redirigirPagina('/AEWeb3/pages/estacion/Estaciones.xhtml');">
+    		 <f:ajax />
+</h:commandButton>
+    	
+		<h:commandButton id="idModificar"  value="Modificar" rendered="#{!gestionEstacion.modoEdicion}"	onclick="return confirm('Seguro que quieres modificar esta estacion?')">
+    			<f:param name="id" value="${gestionEstacion.id}" />
+    			<f:param name="modalidad" value="update" />
+
+		</h:commandButton> 
+		
+		<h:commandButton id="idBorrar"  value="Borrar" rendered="#{!gestionEstacion.modoEdicion and gestionUsuario.rolUsuario().equals('Administrador')}"		
+		action="#{gestionEstacion.borrarEstacion()}"  onclick="return confirm('Seguro que quieres borrar esta estacion?')">
+    			<f:param name="id" value="${gestionEstacion.id}" />
+    			<f:param name="modalidad" value="remove" />
+		</h:commandButton> 
+		
+		<h:commandButton value="Salvar cambios"	rendered="#{gestionEstacion.modoEdicion}" 
+			update=":form" 	action="#{gestionEstacion.salvarCambios()}" >
+		    	<f:param name="id" value="${gestionEstacion.id}" />
+    			<f:param name="modalidad" value="update" />
+    	</h:commandButton>
+	
+		
+	
+	
+			
+		<p:panelGrid columns="3" layout="grid">
+
+			<p:outputLabel  value="Id" />
+			<p:inputText id="id" disabled="true"  value="#{gestionEstacion.estacionSeleccionado.id}" />
+			<p:message for="id" style="color:red" />
+			
+			<p:outputLabel value="Nombre" />
+			<p:inputText id="nombre" disabled="#{!gestionEstacion.modoEdicion}" value="#{gestionEstacion.estacionSeleccionado.nombre}" required="true"  requiredMessage="Debe ingresar un nombre"/>
+			<p:message for="nombre" style="color:red" />
+			
+			<p:outputLabel value="Descripción" />
+			<p:inputText id="descripcion" disabled="#{!gestionEstacion.modoEdicion}" value="#{gestionEstacion.estacionSeleccionado.descripcion}" required="true" requiredMessage="Debe ingresar una descripción"/>
+			<p:message for="descripcion" style="color:red" />
+			
+		
+   			<p:outputLabel  value="Departamento"/>
+			<p:selectOneMenu id="departamento" hideNoSelectionOption="true" disabled="#{!gestionEstacion.modoEdicion}" value="#{gestionEstacion.departamentoEstacion}"  required="true" requiredMessage="Debe seleccionar un departamento">
+				<p:ajax listener="#{gestionEstacion.listaCiudades()}" process="@this" update="ciudad"  />
+   				<f:selectItem itemLabel="Seleccione un Departamento" noSelectionOption ="true" />
+   				<f:selectItems value="#{gestionEstacion.listaDepartamentos()}" var="d" itemLabel="#{d.nombre}" itemValue="#{d.nombre}"/>
+   			</p:selectOneMenu>
+			<p:message for="departamento" style="color:red" />
+			
+			<p:outputLabel  value="Ciudad"/>
+			<p:selectOneMenu id="ciudad" hideNoSelectionOption="true" disabled="#{!gestionEstacion.modoEdicion}"  value="#{gestionEstacion.ciudadEstacion}" required="true" requiredMessage="Debe seleccionar una ciudad">
+   				<f:selectItem itemLabel="Seleccione una Ciudad" noSelectionOption ="true" />
+   				<f:selectItems value="#{gestionEstacion.listaCiudades()}" var="c" itemLabel="#{c.nombre}" itemValue="#{c.nombre}"/>
+   			</p:selectOneMenu>
+   			<p:message for="ciudad" style="color:red" />
+   			
+   			</p:panelGrid>
+   			
+   			
+    		<p:panelGrid columns="3" layout="grid" id="ubi">
+    		
+    		
+    		<p:outputLabel disabled="#{!gestionEstacion.edicionMap}" value="Latitud" />
+			<p:inputText id="latitud" disabled="#{!gestionEstacion.edicionMap}"  value="#{gestionEstacion.latitud}"   required="true" requiredMessage="Debe seleccionar una latitud" />
+			<p:message for="latitud" style="color:red" />
+			
+			<p:outputLabel disabled="#{!gestionEstacion.edicionMap}" value="Longitud" />
+			<p:inputText id="longitud" disabled="#{!gestionEstacion.edicionMap}" value="#{gestionEstacion.longitud}"   required="true" requiredMessage="Debe seleccionar una longitud" />
+			<p:message for="longitud" style="color:red" />
+			
+    		</p:panelGrid>
+    		
+    		<p:panelGrid rendered="#{gestionEstacion.edicionMap}">
+    	
+        		 <h:outputLabel >Seleccione ubicación: </h:outputLabel>
+
+                           
+               <p:gmap id="idmap" disabled="#{!gestionEstacion.modoEdicion}" center="-32.8326876085436, -56.01210319482736" zoom="7" type="HYBRID"  widgetVar="idmap" style="width:100%; height:300px">
+                    <p:ajax event="pointSelect" listener="#{gestionEstacion.onPointSelect}"  process="@this" update="ubi" />
+              </p:gmap>
+                           
+		</p:panelGrid>
+		
+		 <script type="text/javascript" src="http://maps.google.com/maps/api/js?key=AIzaSyAj8u8gZyCkVaMTiRcTXWclFgs0s7sv2nY&amp;" />
+        <script type="text/javascript" >
+            function handlePointClick(event) {
+
+                if (navigator.geolocation) {
+                    browserSupportFlag = true;
+                    var latlng = event.latLng;
+                    geocoder = new google.maps.Geocoder();
+                    geocoder.geocode({
+                        'latLng' : latlng
+                    }, function(results, status) {
+                        if (status === google.maps.GeocoderStatus.OK) {
+                            onPoint([ {
+                                name : 'lng',
+                                value : event.latLng.lng()
+                            }, {
+                                name : 'lat',
+                                value : event.latLng.lat()
+                            } ]);
+
+                        }
+                    });
+                }
+            }
+        </script>
+    
+   <script type="text/javascript">
+    if ("insert" === "#{gestionEstacion.modalidad}") {
+        document.getElementById('idDatosEstacion:latitud').value = "";
+        document.getElementById('idDatosEstacion:longitud').value = "";
+    }
+</script>
+
+	<script>
+    function redirigirPagina(url) {
+        window.location.href = url;
+    }
+</script>
+
+		
+	</h:form>
+
+	
+				 
+			 
+			 
+
+    </ui:define>
+</ui:composition>
+

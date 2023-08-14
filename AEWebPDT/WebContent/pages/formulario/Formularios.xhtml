@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<ui:composition template="/layout/layout.xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui">
+	
+	<ui:define name="title">
+		<c:set var="title" value="Gestion de Formularios" scope="request" />
+	</ui:define>
+	
+	<ui:define name="content">
+	<h:form>
+		<h:link value="Nuevo formulario" outcome="DatosFormulario.xhtml" rendered="#{gestionUsuario.rolUsuario().equals('Administrador') or gestionUsuario.rolUsuario().equals('Investigador')}">
+    			<f:param name="id" value="" />
+    			<f:param name="modalidad" value="insert" />
+    	</h:link>
+
+	
+		
+		 <p:messages id="messages" showDetail="true" closable="true">
+        	<p:autoUpdate />
+    	</p:messages>
+		<h:panelGrid columns="2">
+			
+			
+			
+
+		</h:panelGrid>
+		<h:commandButton value="Listar Formularios"	action="#{gestionFormulario.seleccionarFormularios()}" />
+				
+	</h:form>
+
+	<h3><h:outputLabel value="Formularios seleccionados"/></h3>
+	<p:dataTable value="#{gestionFormulario.formulariosSeleccionados}"
+		var="formulario"
+		   styleClass = "UserTable"
+   		   headerClass = "UserTableHeader">
+   
+   
+        
+		<p:column  sortBy="#{formulario.nombre}">
+			<f:facet name="header">Nombre</f:facet>    				
+      		#{formulario.nombre}
+   		</p:column>
+   		
+   		<p:column  sortBy="#{formulario.resumen}">
+			<f:facet name="header">Resumen</f:facet>    				
+      		#{formulario.resumen}
+   		</p:column>
+   		
+		<p:column  sortBy="#{formulario.campos.get('no2')}">
+			<f:facet name="header">No2</f:facet>    				
+      		<p:outputLabel value="X" rendered="#{formulario.campos.get('no2')}" />
+   		</p:column>
+   		
+   		<p:column  sortBy="#{formulario.campos.get('co2')}">
+			<f:facet name="header">Co2</f:facet>    				
+      		<p:outputLabel value="X" rendered="#{formulario.campos.get('co2')}" />
+   		</p:column>
+   		
+   		<p:column  sortBy="#{formulario.campos.get('pm2,5')}">
+			<f:facet name="header">Pm2,5</f:facet>    				
+      		<p:outputLabel value="X" rendered="#{formulario.campos.get('pm2,5')}" />
+   		</p:column>
+   		
+   		<p:column  sortBy="#{formulario.campos.get('pm10')}">
+			<f:facet name="header">Pm10</f:facet>    				
+      		<p:outputLabel value="X" rendered="#{formulario.campos.get('pm10')}" />
+   		</p:column>
+   		
+   		<p:column  sortBy="#{formulario.campos.get('temperatura')}">
+			<f:facet name="header">Temperatura</f:facet>    				
+      		<p:outputLabel value="X" rendered="#{formulario.campos.get('temperatura')}" />
+   		</p:column>
+   		
+   		<p:column  sortBy="#{formulario.campos.get('precipitacion')}">
+			<f:facet name="header">Precipitacion</f:facet>    				
+			<p:outputLabel value="X" rendered="#{formulario.campos.get('precipitacion')}" style="text-align: right;" />
+		</p:column>
+		
+   		
+		
+	   		<p:column rendered="#{gestionUsuario.rolUsuario().equals('Administrador') or gestionUsuario.rolUsuario().equals('Investigador')}">
+		  
+            <f:facet name="header" >Ver Detalle</f:facet>
+			<h:link value="Ver detalle" outcome="DatosFormulario.xhtml">
+    			<f:param name="id" value="${formulario.id}" />
+    			<f:param name="modalidad" value="view" />
+			</h:link>
+		</p:column>	
+	   		
+		
+	</p:dataTable>
+
+    
+    
+    </ui:define>
+</ui:composition>

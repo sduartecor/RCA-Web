@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<ui:composition template="/layout/layout.xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui">
+	
+	<ui:define name="title">
+		<c:set var="title" value="Datos de Formulario" scope="request" />
+	</ui:define>
+	
+	<ui:define name="content">
+			 
+		<f:metadata>	
+		    <f:viewParam name="id" value="#{gestionFormulario.id}" />
+		    <f:viewParam name="modalidad" value="#{gestionFormulario.modalidad}" />
+		    <f:event type="preRenderView" listener="#{gestionFormulario.preRenderViewListener()}"/>
+		</f:metadata>
+
+	<h:form id="idDatosEstacion" rendered="#{gestionUsuario.rolUsuario().equals('Administrador') or gestionUsuario.rolUsuario().equals('Investigador')}">
+		 
+
+    	
+    	<h:commandButton id="idVolver" immediate="true" value="Volver al listado" onclick="redirigirPagina('/AEWeb3/pages/formulario/Formularios.xhtml');">
+    	 <f:ajax />
+</h:commandButton>
+    	
+		<h:commandButton id="idModificar"  value="Modificar" rendered="#{!gestionFormulario.modoEdicion}"	onclick="return confirm('Seguro que quieres modificar esta estacion?')">
+    			<f:param name="id" value="${gestionFormulario.id}" />
+    			<f:param name="modalidad" value="update" />
+
+		</h:commandButton> 
+		
+		<h:commandButton id="idBorrar"  value="Borrar" rendered="#{!gestionFormulario.modoEdicion and (gestionUsuario.rolUsuario().equals('Administrador') or gestionUsuario.rolUsuario().equals('Investigador'))}"
+		action="#{gestionFormulario.borrarFormulario()}"  onclick="return confirm('Seguro que quieres borrar esta estacion?')">
+    			<f:param name="id" value="${gestionFormulario.id}" />
+    			<f:param name="modalidad" value="remove" />
+		</h:commandButton> 
+		
+		<h:commandButton value="Salvar cambios"	rendered="#{gestionFormulario.modoEdicion}" 
+			update=":form" 	action="#{gestionFormulario.salvarCambios()}" >
+		    	<f:param name="id" value="${gestionFormulario.id}" />
+    			<f:param name="modalidad" value="update" />
+    	</h:commandButton>
+	
+		
+	
+	
+			
+		<p:panelGrid columns="3" layout="grid">
+
+			<p:outputLabel  value="Id" />
+			<p:inputText id="id" disabled="true"  value="#{gestionFormulario.formularioSeleccionado.id}" />
+			<p:message for="id" style="color:red" />
+			
+			<p:outputLabel value="Nombre" />
+			<p:inputText id="nombre" disabled="#{!gestionFormulario.modoEdicion}" value="#{gestionFormulario.formularioSeleccionado.nombre}" required="true"  requiredMessage="Debe ingresar un nombre"/>
+			<p:message for="nombre" style="color:red" />
+			
+			<p:outputLabel value="Resumen" />
+			<p:inputText id="resumen" disabled="#{!gestionFormulario.modoEdicion}" value="#{gestionFormulario.formularioSeleccionado.resumen}"/>
+			<p:message for="resumen" style="color:red" />
+			
+		  	 <p:selectBooleanCheckbox disabled="#{!gestionFormulario.modoEdicion}" value="#{gestionFormulario.varNo2}" itemLabel="NO2 (g/cm^3)" />
+		  	 
+		  	 <p:selectBooleanCheckbox disabled="#{!gestionFormulario.modoEdicion}" value="#{gestionFormulario.varCo2}" itemLabel="CO2 (ppm)" />
+		  	 
+		  	 <p:selectBooleanCheckbox disabled="#{!gestionFormulario.modoEdicion}" value="#{gestionFormulario.varPm25}" itemLabel="PM2,5 (ppm)" />
+		  	 
+		  	 <p:selectBooleanCheckbox disabled="#{!gestionFormulario.modoEdicion}" value="#{gestionFormulario.varPm10}" itemLabel="PM10 (ppm)" />
+		  	 
+		  	 <p:selectBooleanCheckbox disabled="#{!gestionFormulario.modoEdicion}" value="#{gestionFormulario.varTemperatura}" itemLabel="Temperatura (ºC)" />
+		  	 
+		  	 <p:selectBooleanCheckbox disabled="#{!gestionFormulario.modoEdicion}" value="#{gestionFormulario.varPrecipitacion}" itemLabel="Precipitacion (mm)" />
+			
+		
+						
+    	
+    		</p:panelGrid>
+    
+    
+    <script>
+    function redirigirPagina(url) {
+        window.location.href = url;
+    }
+</script>
+		
+		
+	</h:form>
+
+	
+				 
+			 
+			 
+
+    </ui:define>
+</ui:composition>
+

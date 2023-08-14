@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<ui:composition template="/layout/layout.xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui">
+	
+	<ui:define name="title">
+		<c:set var="title" value="Análisis y gestión de reportes" scope="request" />
+	</ui:define>
+	
+	<ui:define name="content">
+	<h:form>
+		
+	<h3><h:outputLabel value="Criterios de Seleccion"/></h3>
+	
+		
+		 <p:messages id="messages" showDetail="true" closable="true">
+        	<p:autoUpdate />
+    	</p:messages>
+		<p:panelGrid  columns="2" border = "1"
+            cellpadding = "10" cellspacing = "1">
+		
+		  <f:facet name = "header">
+		<p:outputLabel value="Filtros: " />
+			<p:selectOneMenu id="filtros" hideNoSelectionOption="true"  value="#{gestionRegistro.tipoFiltro}">
+   				<p:ajax listener="#{gestionRegistro.seleccionarFiltros()}" process="@this" update="foo"  />
+   				<f:selectItem itemLabel="Seleccione un filtro" itemValue="todos" />
+   				<f:selectItem itemValue="ubicacion" itemLabel="Ubicación" />
+   				<f:selectItem itemValue="fechas" itemLabel="Fechas" />
+   				<f:selectItem itemValue="usuario" itemLabel="Usuario" />
+			</p:selectOneMenu>
+			 </f:facet>
+			 
+			 
+			<p:panelGrid columns="2" id="foo">
+			
+			
+		<p:panelGrid columns="2" rendered="#{gestionRegistro.filtroUbicacion}">
+			
+			<p:outputLabel  value="Departamento"/>
+			<p:selectOneMenu id="departamento" hideNoSelectionOption="true"  value="#{gestionRegistro.departamentoRegistro}" >
+			<p:ajax listener="#{gestionRegistro.listaCiudades()}" process="@this" update="ciudad"  />
+   				<f:selectItem itemLabel="Seleccione un Departamento" noSelectionOption ="true" />
+   				<f:selectItems value="#{gestionRegistro.listaDepartamentos()}" var="c" itemLabel="#{c.nombre}" itemValue="#{c.nombre}"/>
+   			</p:selectOneMenu>
+			
+			<p:outputLabel  value="Ciudad"/>
+			<p:selectOneMenu id="ciudad" hideNoSelectionOption="true"  value="#{gestionRegistro.ciudadRegistro}" >
+   				<f:selectItem itemLabel="Seleccione una Ciudad" noSelectionOption ="true" />
+   				<f:selectItems value="#{gestionRegistro.listaCiudades()}" var="c" itemLabel="#{c.nombre}" itemValue="#{c.nombre}"/>
+   			</p:selectOneMenu>
+   			
+   			</p:panelGrid>
+   			
+   			<p:panelGrid columns="3" rendered="#{gestionRegistro.filtroFecha}" >
+   				<p:outputLabel  value="Desde: " />
+			<p:calendar id="desdef"  showOn="button"  maxdate="#{currentDate}" value="#{gestionRegistro.fechaDesde}" pattern="dd-MM-yyyy" mask="true" validatorMessage="La fecha no puede ser superior a la actual"/>
+			<p:message for="desdef" style="color:red" />
+			<p:outputLabel  value="Hasta: " />
+			<p:calendar id="hastaf" showOn="button"  maxdate="#{currentDate}" value="#{gestionRegistro.fechaHasta}" pattern="dd-MM-yyyy" mask="true" validatorMessage="La fecha no puede ser superior a la actual"/>
+			<p:message for="hastaf" style="color:red" />
+   			</p:panelGrid>
+   			
+   			
+   			<p:outputLabel  value="Se listaran todos tus registros" rendered="#{gestionRegistro.filtroUsuario}" />
+   			
+   			<p:outputLabel  value="Por defecto se listaran todos los registros" rendered="#{gestionRegistro.filtroTodos}" />
+   			
+   			
+   			
+   			</p:panelGrid>
+   			
+   			
+   			
+   			 
+		<f:facet name = "footer">
+		<h:commandButton value="Filtrar" style="text-align: center;"	action="#{gestionRegistro.filtrarRegistros()}" />
+		</f:facet>
+			
+
+		</p:panelGrid>
+		
+		
+		  
+				
+	</h:form>
+
+	<h3><h:outputLabel value="Registros seleccionados"/></h3>
+	<p:dataTable value="#{gestionRegistro.registrosSeleccionados}" id="registroca"
+		var="registro"
+		   styleClass = "UserTable"
+   		   headerClass = "UserTableHeader">
+
+   
+        
+		<p:column  sortBy="#{registro.metodo}">
+			<f:facet name="header">Metodo</f:facet>    				
+      		<p:outputLabel value="#{registro.metodo}" />
+   		</p:column>
+   		
+   		<p:column  sortBy="#{registro.fecha}">
+			<f:facet name="header">Fecha</f:facet>    								
+      		<p:outputLabel value="#{registro.fecha}" >
+      		<f:convertDateTime pattern="yyyy/MM/dd"/>
+      		</p:outputLabel>
+   		</p:column>
+   		
+   		
+   		<p:column  sortBy="#{registro.estacion.nombre}">
+			<f:facet name="header">Estacion</f:facet>    				
+      		<p:outputLabel value="#{registro.estacion.nombre}" />
+   		</p:column>
+   		   		
+   		
+   		<p:column  sortBy="#{registro.formulario.nombre}">
+			<f:facet name="header">Formulario</f:facet>    				
+      		<p:outputLabel value="#{registro.formulario.nombre}" />
+   		</p:column>
+   		
+		<p:column  sortBy="#{registro.campos.get('no2')}">
+			<f:facet name="header">No2</f:facet>    				
+      		<p:outputLabel value="#{registro.campos.get('no2')}" />
+   		</p:column>
+   		
+   		<p:column  sortBy="#{registro.campos.get('co2')}">
+			<f:facet name="header">Co2</f:facet>    				
+      		<p:outputLabel value="#{registro.campos.get('co2')}" />
+   		</p:column>
+   		
+   		<p:column  sortBy="#{registro.campos.get('pm2,5')}">
+			<f:facet name="header">Pm2,5</f:facet>    				
+      		<p:outputLabel value="#{registro.campos.get('pm2,5')}" />
+   		</p:column>
+   		
+   		<p:column  sortBy="#{registro.campos.get('pm10')}">
+			<f:facet name="header">Pm10</f:facet>    				
+      		<p:outputLabel value="#{registro.campos.get('pm10')}" />
+   		</p:column>
+   		
+   		<p:column  sortBy="#{registro.campos.get('temperatura')}">
+			<f:facet name="header">Temperatura</f:facet>    				
+      		<p:outputLabel value="#{registro.campos.get('temperatura')}" />
+   		</p:column>
+   		
+   		<p:column  sortBy="#{registro.campos.get('precipitacion')}">
+			<f:facet name="header">Precipitacion</f:facet>    				
+			<p:outputLabel value="#{registro.campos.get('precipitacion')}" />
+		</p:column>
+		
+			<p:column  sortBy="#{registro.usuario}">
+			<f:facet name="header">Usuario</f:facet>    				
+			<p:outputLabel value="#{registro.usuario}" />
+		</p:column>
+		
+		
+   			<p:column >
+		  
+            <f:facet name="header" >Ver Detalle</f:facet>
+			<h:link value="Ver detalle" outcome="/pages/registroca/DatosRegistro.xhtml" rendered="#{gestionUsuario.rolUsuario().equals('Administrador') or gestionUsuario.usuarioIngresado.nickname.equals(registro.usuario.toLowerCase())}">
+    			<f:param name="id" value="${registro.id}" />
+    			<f:param name="modalidad" value="view" />
+			</h:link>
+		</p:column>	
+	   		
+		
+	</p:dataTable>
+
+    
+    
+    </ui:define>
+</ui:composition>

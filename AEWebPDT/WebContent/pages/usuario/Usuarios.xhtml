@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<ui:composition template="/layout/layout.xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui">
+	
+	<ui:define name="title">
+		<c:set var="title" value="Gestion de Usuarios" scope="request" />
+	</ui:define>
+	
+	<ui:define name="content">
+	<h:form>
+		<h:link value="Nuevo usuario" outcome="DatosUsuario.xhtml" rendered="#{gestionUsuario.rolUsuario().equals('Administrador')}">
+    			<f:param name="id" value="" />
+    			<f:param name="modalidad" value="insert" />
+    	</h:link>
+	<h3><h:outputLabel value="Criterios de Seleccion"/></h3>
+	
+		
+		 <p:messages id="messages" showDetail="true" closable="true">
+        	<p:autoUpdate />
+    	</p:messages>
+		<h:panelGrid columns="2">
+			<p:outputLabel value="Nombre" />
+			<p:inputText id="nombre" value="#{gestionUsuario.criterioNombre}" />
+
+			<p:outputLabel value="Rol" />
+			<p:selectOneMenu value="#{gestionUsuario.criterioRol}">
+   				<f:selectItem itemValue="" itemLabel="--Todos--" />
+				<f:selectItem itemValue="#{gestionUsuario.admin.ordinal()}" itemLabel="Administrador" />
+   				<f:selectItem itemValue="#{gestionUsuario.inv.ordinal()}" itemLabel="Investigador" />
+   				<f:selectItem itemValue="#{gestionUsuario.afic.ordinal()}" itemLabel="Aficionado" />
+			</p:selectOneMenu>
+			
+
+		</h:panelGrid>
+		<h:commandButton value="Buscar"	action="#{gestionUsuario.seleccionarUsuarios()}" />
+				
+	</h:form>
+
+	<h3><h:outputLabel value="Usuarios seleccionados"/></h3>
+	<p:dataTable value="#{gestionUsuario.usuariosSeleccionados}"
+		var="usuario"
+		   styleClass = "UserTable"
+   		   headerClass = "UserTableHeader">
+           
+		<p:column  sortBy="#{usuario.nombre}">
+			<f:facet name="header">Nombre</f:facet>    				
+      		#{usuario.nombre}
+   		</p:column>
+
+		<p:column sortBy="#{usuario.apellido}">
+			<f:facet name="header">Apellido</f:facet>
+		      #{usuario.apellido}
+		</p:column>
+
+		<p:column sortBy="#{usuario.documento}" rendered="#{gestionUsuario.rolUsuario().equals('Administrador') or gestionUsuario.rolUsuario().equals('Investigador')}">
+			<f:facet name="header">Cédula</f:facet>
+      		#{usuario.documento}
+   		</p:column>
+   		
+   		<p:column sortBy="#{usuario.domicilio}">
+			<f:facet name="header">Domicilio</f:facet>
+		      #{usuario.domicilio}
+		</p:column>
+		
+		<p:column sortBy="#{usuario.ciudad.nombre}">
+			<f:facet name="header">Ciudad</f:facet>
+		      #{usuario.ciudad.nombre}
+		</p:column>
+		
+		<p:column sortBy="#{usuario.telefono}">
+			<f:facet name="header">Teléfono</f:facet>
+		      #{usuario.telefono}
+		</p:column>
+   		
+   		<p:column sortBy="#{usuario.mail}">
+			<f:facet name="header">Email</f:facet>
+		      #{usuario.mail}
+		</p:column>
+   		
+   		<p:column sortBy="#{usuario.rol}" rendered="true">
+			<f:facet name="header">Rol</f:facet>
+      		#{usuario.rol}
+   		</p:column>
+   		
+   		<p:column sortBy="#{usuario.nickname}" rendered="#{gestionUsuario.rolUsuario().equals('Administrador')}">
+			<f:facet name="header">Nombre de Usuario</f:facet>
+      		#{usuario.nickname}
+   		</p:column>
+   		
+   			<p:column sortBy="#{usuario.clave}" rendered="#{gestionUsuario.rolUsuario().equals('Administrador')}">
+			<f:facet name="header">Contraseña</f:facet>
+      		<h:link value="Cambiar Contraseña" outcome="Password.xhtml">
+    			<f:param name="id" value="${usuario.id}" />
+    			<f:param name="modalidad" value="none" />
+			</h:link>
+   		</p:column>
+   	
+   		
+		<p:column rendered="#{gestionUsuario.rolUsuario().equals('Administrador')}">
+		  
+            <f:facet name="header" >Ver Detalle</f:facet>
+			<h:link value="Ver detalle" outcome="DatosUsuario.xhtml">
+    			<f:param name="id" value="${usuario.id}" />
+    			<f:param name="modalidad" value="view" />
+			</h:link>
+			
+		</p:column>	
+	</p:dataTable>
+
+    
+    
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<ui:composition template="/layout/layout.xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui">
+	
+	<ui:define name="title">
+		<c:set var="title" value="Datos de Usuario" scope="request" />
+	</ui:define>
+	
+	<ui:define name="content">
+			 
+		<f:metadata>	
+		    <f:viewParam name="id" value="#{gestionUsuario.id}" />
+		    <f:viewParam name="modalidad" value="#{gestionUsuario.modalidad}" />
+		    <f:event type="preRenderView" listener="#{gestionUsuario.preRenderViewListener}"/>
+		</f:metadata>
+
+	<h:form id="idDatosUsuario" rendered="#{gestionUsuario.idUsuario() == gestionUsuario.usuarioSeleccionado.id or gestionUsuario.rolUsuario().equals('Administrador')}">
+		 
+
+    	<h:commandButton id="idVolver" immediate="true" value="Volver al listado" onclick="redirigirPagina('/AEWeb3/pages/usuario/Usuarios.xhtml');">
+    	 <f:ajax />
+</h:commandButton>
+
+    	
+    	
+		<h:commandButton id="idModificar"  value="Modificar" rendered="#{!gestionUsuario.modoEdicion}"	onclick="return confirm('Seguro que quieres modificar este usuario?')">
+    			<f:param name="id" value="${gestionUsuario.id}" />
+    			<f:param name="modalidad" value="update" />
+
+		</h:commandButton> 
+		
+		<h:commandButton id="idBorrar"  value="Borrar" rendered="#{!gestionUsuario.modoEdicion and gestionUsuario.rolUsuario().equals('Administrador')}"		
+		action="#{gestionUsuario.borrarUsuario}"  onclick="return confirm('Seguro que quieres borrar este usuario?')">
+    			<f:param name="id" value="${gestionUsuario.id}" />
+    			<f:param name="modalidad" value="remove" />
+		</h:commandButton> 
+		
+		<h:commandButton value="Salvar cambios"	rendered="#{gestionUsuario.modoEdicion}" 
+			update=":form" 	action="#{gestionUsuario.salvarCambios}" >
+		    	<f:param name="id" value="${gestionUsuario.id}" />
+    			<f:param name="modalidad" value="update" />
+    	</h:commandButton>
+	
+		
+	
+	
+			
+		<p:panelGrid columns="3" layout="grid">
+
+			<p:outputLabel  value="Id" />
+			<p:inputText id="id" disabled="true"  value="#{gestionUsuario.usuarioSeleccionado.id}" />
+			<p:message for="id" style="color:red" />
+			
+			<p:outputLabel value="Nombre" />
+			<p:inputText id="nombre" disabled="#{!gestionUsuario.modoEdicion}" value="#{gestionUsuario.usuarioSeleccionado.nombre}" required="true"  requiredMessage="Debe ingresar un nombre"/>
+			<p:message for="nombre" style="color:red" />
+			
+			<p:outputLabel value="Apellido" />
+			<p:inputText id="apellido" disabled="#{!gestionUsuario.modoEdicion}" value="#{gestionUsuario.usuarioSeleccionado.apellido}" required="true" requiredMessage="Debe ingresar un apellido"/>
+			<p:message for="apellido" style="color:red" />
+			
+
+			
+			
+			<p:outputLabel disabled="#{!gestionUsuario.modoEdicion}" value="E-Mail" />
+			<p:inputText id="mail" disabled="#{!gestionUsuario.modoEdicion}" value="#{gestionUsuario.usuarioSeleccionado.mail}"/>
+						<p:message for="mail" style="color:red" />
+				
+						
+			<p:outputLabel disabled="#{!gestionUsuario.modoEdicion}" value="Nombre de Usuario" />
+			<p:inputText id="nickname" disabled="#{!gestionUsuario.modoEdicion}" minlength="8" value="#{gestionUsuario.usuarioSeleccionado.nickname}" required="true" requiredMessage="Debe ingresar un nickname" />
+			<p:message for="nickname" style="color:red" />
+		
+			<p:outputLabel disabled="#{!gestionUsuario.modoEdicion}" value="Contraseña" rendered="#{gestionUsuario.edicionClave}"/>
+			<p:inputText id="clave" disabled="#{!gestionUsuario.modoEdicion}" value="#{gestionUsuario.usuarioSeleccionado.clave}" required="true" requiredMessage="Debe ingresar una clave"  rendered="#{gestionUsuario.edicionClave}"/>
+			<p:message for="clave" style="color:red"  rendered="#{gestionUsuario.edicionClave}" />
+			
+			
+			<p:outputLabel value="Rol de usuario" rendered="#{gestionUsuario.rolUsuario().equals('Administrador')}" />
+			<p:selectOneMenu id="rol" hideNoSelectionOption="true" disabled="#{!gestionUsuario.modoEdicion}" value="#{gestionUsuario.usuarioSeleccionado.rol}" required="true" requiredMessage="Debe seleccionar un rol"  rendered="#{gestionUsuario.rolUsuario().equals('Administrador')}">
+   				<p:ajax listener="#{gestionUsuario.viewDatosExtra()}" process="@this" update="foo"  />
+   				<f:selectItem itemLabel="Seleccione un Rol" noSelectionOption ="true" />
+   				<f:selectItem itemValue="#{gestionUsuario.admin}" itemLabel="Administrador" />
+   				<f:selectItem itemValue="#{gestionUsuario.inv}" itemLabel="Investigador" />
+   				<f:selectItem itemValue="#{gestionUsuario.afic}" itemLabel="Aficionado" />
+			</p:selectOneMenu>
+			<p:message for="rol" style="color:red" rendered="#{gestionUsuario.rolUsuario().equals('Administrador')}"/>
+						
+						 
+    	
+    		</p:panelGrid>
+    		
+    		<p:panelGrid columns="3" id="foo" layout="grid" >
+    		
+    	
+			<p:outputLabel  value="Cédula" rendered="#{gestionUsuario.datosExtra}"/>
+			<p:inputMask id="cedula" disabled="#{!gestionUsuario.modoEdicion}" rendered="#{gestionUsuario.datosExtra}" value="#{gestionUsuario.usuarioSeleccionado.documento}" required="#{gestionUsuario.datosExtra}" requiredMessage="Debe ingresar un documento" mask="9999999-9"   >
+			<f:validator validatorId="cedulaValidator"/>
+			</p:inputMask>
+			<p:message for="cedula" style="color:red" />
+			
+			<p:outputLabel  value="Departamento" rendered="#{gestionUsuario.datosExtra}"/>
+			<p:selectOneMenu id="departamento" hideNoSelectionOption="true" disabled="#{!gestionUsuario.modoEdicion}" rendered="#{gestionUsuario.datosExtra}" value="#{gestionUsuario.departamentoUsuario}"   required="#{gestionUsuario.datosExtra}" requiredMessage="Debe seleccionar un departamento">
+				<p:ajax listener="#{gestionUsuario.listaCiudades()}" process="@this" update="ciudad"  />
+   				<f:selectItem itemLabel="Seleccione un Departamento" noSelectionOption ="true" />
+   				<f:selectItems value="#{gestionUsuario.listaDepartamentos()}" var="d" itemLabel="#{d.nombre}" itemValue="#{d.nombre}"/>
+   			</p:selectOneMenu>
+			<p:message for="departamento" style="color:red" />
+			
+			<p:outputLabel  value="Ciudad" rendered="#{gestionUsuario.datosExtra}"/>
+			<p:selectOneMenu id="ciudad" hideNoSelectionOption="true" disabled="#{!gestionUsuario.modoEdicion}" rendered="#{gestionUsuario.datosExtra}" value="#{gestionUsuario.ciudadUsuario}"  required="#{gestionUsuario.datosExtra}" requiredMessage="Debe seleccionar una ciudad">
+   				<f:selectItem itemLabel="Seleccione una Ciudad" noSelectionOption ="true" />
+   				<f:selectItems value="#{gestionUsuario.listaCiudades()}" var="c" itemLabel="#{c.nombre}" itemValue="#{c.nombre}"/>
+   			</p:selectOneMenu>
+   			<p:message for="ciudad" style="color:red" />
+    		
+    		    		
+    		<p:outputLabel disabled="#{!gestionUsuario.modoEdicion}" value="Domicilio" rendered="#{gestionUsuario.datosExtra}"/>
+			<p:inputText id="domicilio" disabled="#{!gestionUsuario.modoEdicion}"  rendered="#{gestionUsuario.datosExtra}" value="#{gestionUsuario.usuarioSeleccionado.domicilio}"  required="#{gestionUsuario.datosExtra}" requiredMessage="Debe ingresar un domicilio" />
+			<p:message for="domicilio" style="color:red" />
+   				
+			
+			<p:outputLabel disabled="#{!gestionUsuario.modoEdicion}" value="Teléfono"  rendered="#{gestionUsuario.datosExtra}"/>
+			<p:inputMask id="telefono"  disabled="#{!gestionUsuario.modoEdicion}"  rendered="#{gestionUsuario.datosExtra}" value="#{gestionUsuario.usuarioSeleccionado.telefono}" required="#{gestionUsuario.datosExtra}" requiredMessage="Debe ingresar un telefono" mask="(999)999-999" validateMask="true" />
+			<p:message for="telefono" style="color:red" />
+			
+			
+		
+			
+    		</p:panelGrid>
+    		
+    		
+    		
+    	
+    		<p:keyFilter for="nombre" mask="alpha" />
+    		<p:keyFilter for="apellido" mask="alpha" />
+    		<p:keyFilter for="nickname" mask="alpha" />
+    		
+
+    		
+		<script>
+    function redirigirPagina(url) {
+        window.location.href = url;
+    }
+</script>
+		
+		
+	</h:form>
+
+	
+				 
+			 
+			 
+
+    </ui:define>
+</ui:composition>
+

@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<ui:composition template="/layout/layout.xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui">
+	
+	<ui:define name="title">
+		<c:set var="title" value="Gestion de Registros de Calidad del Aire" scope="request" />
+	</ui:define>
+	
+	<ui:define name="content" >
+	<h:form enctype="multipart/form-data">
+		<h:link value="Nuevo registro" outcome="DatosRegistro.xhtml" rendered="#{gestionUsuario.rolUsuario().equals('Administrador')}">
+    			<f:param name="id" value="" />
+    			<f:param name="modalidad" value="insert" />
+    	</h:link>
+	
+		
+		 <p:messages id="messages" showDetail="true" closable="true">
+        	<p:autoUpdate />
+    	</p:messages>
+			
+		
+     
+ <p:panelGrid columns="3">
+	 
+		           	<p:panelGrid  columns="2" border = "1"
+            cellpadding = "10" cellspacing = "3" rendered="#{gestionUsuario.rolUsuario().equals('Administrador') or gestionUsuario.rolUsuario().equals('Investigador')}">
+		
+		
+		<f:facet name = "header"> Importar Archivos Excel </f:facet>
+	
+			 
+			 
+			<p:panelGrid columns="2" >
+			
+			
+			 <h:inputFile value="#{gestionRegistro.archivoSubido}"  id="file" style="margin: auto"   accept=".xls,.xlsx">
+		            </h:inputFile>
+   			
+   			
+   			</p:panelGrid>
+
+   			 
+		<f:facet name = "footer">
+		 <h:commandButton value="Cargar datos de Registro"   style="margin-left: 3rem" action="#{gestionRegistro.importarExcel()}" />
+		</f:facet>
+			
+
+		</p:panelGrid>
+		
+		
+			<p:panelGrid  columns="2" border = "3"
+            cellpadding = "10" cellspacing = "1"> 
+            
+     
+
+	 
+		           	<p:panelGrid  columns="2" border = "1"
+            cellpadding = "10" cellspacing = "3" >
+		
+	
+		<f:facet name = "header"> Exportar Archivos Excel </f:facet>
+		
+			 
+			 
+			<p:panelGrid columns="2" >
+			
+			
+			   <h:commandLink styleClass="ui-button" style="margin-left: 6rem"  >
+		                <h:graphicImage styleClass="" library="images" name="xls.png" width="25px" height="25px" ></h:graphicImage>  
+		                <p:dataExporter type="xls" postProcessor="#{exportarExcel.postProcessXLS}"
+		                    target="registroca" fileName="registroca" />
+		            </h:commandLink> 
+   			
+   			
+   			</p:panelGrid>
+
+   			 
+		<f:facet name = "footer">
+		<h:outputText  value="Antes de exportar debe listar los Registros" />
+		</f:facet>
+			
+
+		</p:panelGrid>
+		           
+
+				</p:panelGrid>
+				
+				</p:panelGrid>
+			
+
+		<h:commandButton value="Listar Registros"	action="#{gestionRegistro.listaRegistros()}" />
+		
+		 
+		
+			
+	</h:form>
+
+	<h3><h:outputLabel value="Registros seleccionados"/></h3>
+	<p:dataTable value="#{gestionRegistro.registrosSeleccionados}" id="registroca"
+		var="registro"
+		   styleClass = "UserTable"
+   		   headerClass = "UserTableHeader">
+
+   
+        
+		<p:column  sortBy="#{registro.metodo}">
+			<f:facet name="header">Método de medición</f:facet>    				
+      		<p:outputLabel value="#{registro.metodo}" />
+   		</p:column>
+   		
+   		<p:column  sortBy="#{registro.fecha}">
+			<f:facet name="header">Fecha</f:facet>    								
+      		<p:outputLabel value="#{registro.fecha}" >
+      		<f:convertDateTime pattern="yyyy-MM-dd"/>
+      		</p:outputLabel>
+   		</p:column>
+   		
+   		
+   		<p:column  sortBy="#{registro.estacion.nombre}">
+			<f:facet name="header">Estacion</f:facet>    				
+      		<p:outputLabel value="#{registro.estacion.nombre}" />
+   		</p:column>
+   		   		
+   		
+   		<p:column  sortBy="#{registro.formulario.nombre}">
+			<f:facet name="header">Formulario</f:facet>    				
+      		<p:outputLabel value="#{registro.formulario.nombre}" />
+   		</p:column>
+   		
+		<p:column  sortBy="#{registro.campos.get('no2')}">
+			<f:facet name="header">No2</f:facet>    				
+      		<p:outputLabel value="#{registro.campos.get('no2')}" />
+   		</p:column>
+   		
+   		<p:column  sortBy="#{registro.campos.get('co2')}">
+			<f:facet name="header">Co2</f:facet>    				
+      		<p:outputLabel value="#{registro.campos.get('co2')}" />
+   		</p:column>
+   		
+   		<p:column  sortBy="#{registro.campos.get('pm2,5')}">
+			<f:facet name="header">Pm2,5</f:facet>    				
+      		<p:outputLabel value="#{registro.campos.get('pm2,5')}" />
+   		</p:column>
+   		
+   		<p:column  sortBy="#{registro.campos.get('pm10')}">
+			<f:facet name="header">Pm10</f:facet>    				
+      		<p:outputLabel value="#{registro.campos.get('pm10')}" />
+   		</p:column>
+   		
+   		<p:column  sortBy="#{registro.campos.get('temperatura')}">
+			<f:facet name="header">Temperatura</f:facet>    				
+      		<p:outputLabel value="#{registro.campos.get('temperatura')}" />
+   		</p:column>
+   		
+   		<p:column  sortBy="#{registro.campos.get('precipitacion')}">
+			<f:facet name="header">Precipitacion</f:facet>    				
+			<p:outputLabel value="#{registro.campos.get('precipitacion')}" />
+		</p:column>
+		
+		<p:column  sortBy="#{registro.usuario}">
+			<f:facet name="header">Usuario</f:facet>    				
+			<p:outputLabel value="#{registro.usuario}" />
+		</p:column>
+		
+		
+   		
+		
+	   		<p:column  exportable="false">
+		  
+            <f:facet name="header" >Ver Detalle</f:facet>
+			<h:link value="Ver detalle" outcome="DatosRegistro.xhtml" rendered="#{gestionUsuario.rolUsuario().equals('Administrador') or gestionUsuario.usuarioIngresado.nickname.equals(registro.usuario.toLowerCase())}">
+    			<f:param name="id" value="${registro.id}" />
+    			<f:param name="modalidad" value="view" />
+			</h:link>
+		</p:column>	
+	   		
+		
+	</p:dataTable>
+
+    
+    
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<ui:composition template="/layout/layout.xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui">
+	
+	<ui:define name="title">
+		<c:set var="title" value="Gestion de Estaciones" scope="request" />
+	</ui:define>
+	
+	<ui:define name="content">
+	<h:form>
+		<h:link value="Nueva estacion" outcome="DatosEstacion.xhtml" rendered="#{gestionUsuario.rolUsuario().equals('Administrador') or gestionUsuario.rolUsuario().equals('Investigador')}">
+    			<f:param name="id" value="" />
+    			<f:param name="modalidad" value="insert" />
+    	</h:link>
+	
+		
+		 <p:messages id="messages" showDetail="true" closable="true">
+        	<p:autoUpdate />
+    	</p:messages>
+		<h:panelGrid columns="2">
+			
+			
+			
+
+		</h:panelGrid>
+		<h:commandButton value="Listar Estaciones"	action="#{gestionEstacion.seleccionarEstaciones()}" />
+				
+	</h:form>
+
+	<h3><h:outputLabel value="Estaciones seleccionados"/></h3>
+	<p:dataTable value="#{gestionEstacion.estacionesSeleccionadas}"
+		var="estacion"
+		   styleClass = "UserTable"
+   		   headerClass = "UserTableHeader">
+ 
+   
+        
+		<p:column  sortBy="#{estacion.nombre}">
+			<f:facet name="header">Nombre</f:facet>    				
+      		#{estacion.nombre}
+   		</p:column>
+
+		<p:column sortBy="#{estacion.descripcion}">
+			<f:facet name="header">Descripción</f:facet>
+		      #{estacion.descripcion}
+		</p:column>
+   		
+   		<p:column sortBy="#{estacion.ciudad.nombre}">
+			<f:facet name="header">Ciudad</f:facet>
+		      "#{estacion.ciudad.nombre}"
+		</p:column>
+		
+		<p:column  sortBy="#{estacion.latitud}">
+			<f:facet name="header">Latitud</f:facet>    				
+      		#{estacion.latitud}
+   		</p:column>
+   		
+   		<p:column  sortBy="#{estacion.longitud}">
+			<f:facet name="header">Longitud</f:facet>    				
+      		#{estacion.longitud}
+   		</p:column>
+		
+	   		<p:column rendered="#{gestionUsuario.rolUsuario().equals('Administrador') or gestionUsuario.rolUsuario().equals('Investigador')}">
+		  
+            <f:facet name="header" >Ver Detalle</f:facet>
+			<h:link value="Ver detalle" outcome="DatosEstacion.xhtml">
+    			<f:param name="id" value="${estacion.id}" />
+    			<f:param name="modalidad" value="view" />
+			</h:link>
+		</p:column>	
+	   		
+		
+	</p:dataTable>
+
+    
+    
+    </ui:define>
+</ui:composition>

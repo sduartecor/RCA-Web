@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<ui:composition
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui" >
+ <!-- <p:panelGrid columns="1" style="text-align: left;" cellpadding="2">  -->
+    	
+    	
+   	<div style="background-color: #809fff;padding: 12px">
+		<span
+			style="color: white; font-size: 180%; font-family: Arial; margin: 20px">
+			Sistema de Gestion de la Calidad del Aire</span>
+
+	</div>
+   	
+    	
+    <h:form>  
+    <p:growl id="messages"/>
+     <p:menubar>
+ 		 
+ 		<p:menuitem value="Inicio" outcome="/index.xhtml" icon="ui-icon-home" />
+ 		
+        <p:submenu label="Gestión de Usuarios" icon="ui-icon-document" rendered="true" >
+            <p:menuitem value="Seleccion de usuario"  outcome="/pages/usuario/Usuarios.xhtml" icon="ui-icon-document" />
+            <p:menuitem value="Alta de usuario" outcome="/pages/usuario/DatosUsuario.xhtml" icon="ui-icon-plus" rendered="#{gestionUsuario.rolUsuario().equals('Administrador')}" >
+            	<f:param name="id" value="" />
+    			<f:param name="modalidad" value="insert" />
+            </p:menuitem>
+           
+        </p:submenu>
+
+    
+ 			 <p:submenu label="Gestión de Formularios"  icon="ui-icon-script" >
+ 			<p:menuitem value="Seleccion de formulario"  outcome="/pages/formulario/Formularios.xhtml" icon="ui-icon-document" />
+ 			<p:menuitem value="Alta de formulario" outcome="/pages/formulario/DatosFormulario.xhtml" icon="ui-icon-plus" rendered="#{gestionUsuario.rolUsuario().equals('Administrador') or gestionUsuario.rolUsuario().equals('Investigador')}" >
+            	<f:param name="id" value="" />
+    			<f:param name="modalidad" value="insert" />
+            </p:menuitem>
+ 		 	</p:submenu>
+ 		 	
+ 			 <p:submenu label="Gestión de Registros de Calidad de Aire" icon="ui-icon-flag" >
+ 			 <p:menuitem value="Seleccion de registro"  outcome="/pages/registroca/Registros.xhtml" icon="ui-icon-document" />
+ 			 <p:menuitem value="Alta de Registro" outcome="/pages/registroca/DatosRegistro.xhtml" icon="ui-icon-plus"  >
+            	<f:param name="id" value="" />
+    			<f:param name="modalidad" value="insert" />
+            </p:menuitem>
+ 			 </p:submenu>
+ 			 
+ 			 <p:submenu label="Gestión de Estaciones de Medición Meteorológicas" icon="ui-icon-grip-diagonal-se" >
+ 			<p:menuitem value="Seleccion de estacion"  outcome="/pages/estacion/Estaciones.xhtml" icon="ui-icon-document" />
+ 			<p:menuitem value="Alta de estacion" outcome="/pages/estacion/DatosEstacion.xhtml" icon="ui-icon-plus" rendered="#{gestionUsuario.rolUsuario().equals('Administrador') or gestionUsuario.rolUsuario().equals('Investigador')}" >
+            	<f:param name="id" value="" />
+    			<f:param name="modalidad" value="insert" />
+            </p:menuitem>
+ 			 </p:submenu>
+ 			 
+ 			  <p:menuitem value="Análisis y Gestión de Reportes" icon="ui-icon-document" outcome="/pages/araire/Analisis.xhtml" />
+ 		
+ 		
+ 		
+       
+ 
+       
+ 		<p:submenu label="Usuario: #{gestionUsuario.usuarioIngresado.nickname}"  icon="ui-icon-person" rendered="#{!gestionUsuario.varLDAP}"  style="float:right">
+ 			<p:menuitem value="Modificar cuenta" outcome="/pages/usuario/DatosUsuario.xhtml" icon="ui-icon-gear" >
+            	<f:param name="id" value="${gestionUsuario.idUsuario()}" />
+    			<f:param name="modalidad" value="view" />
+        </p:menuitem>
+        
+ 			<p:menuitem value="Cerrar Sesión" action="#{gestionUsuario.cerrarSesion()}" icon="ui-icon-power" />
+ 		
+ 		</p:submenu>
+ 		
+ 		<p:submenu label="Usuario: #{gestionUsuario.usuarioLDAP.nickname}"  icon="ui-icon-person" rendered="#{gestionUsuario.varLDAP}"  style="float:right">       
+ 			<p:menuitem value="Cerrar Sesión" action="#{gestionUsuario.cerrarSesion()}" icon="ui-icon-power" />
+ 		
+ 		</p:submenu>
+ 
+ 
+        
+    </p:menubar>
+</h:form>
+ 
+    
+   <!--   </p:panelGrid> -->      	
+   	
+    		
+            
+</ui:composition>

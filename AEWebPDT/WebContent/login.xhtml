@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<ui:composition template="/layout/layout.xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui">
+
+	<f:metadata>
+		<f:viewAction action="#{gestionUsuario.cargarDatos()}" />
+	</f:metadata>
+
+	<ui:define name="title">
+		<div style="background-color: #809fff;padding: 12px">
+			<span style="color: white; font-size: 180%; font-family: Arial; margin: 20px">
+				Sistema de Gestion de la Calidad del Aire
+			</span>
+		</div>
+		<c:set var="title" value="LOGIN" scope="request" />
+	</ui:define>
+
+	<ui:define name="content">
+		<h2>Acceso para Usuarios</h2>
+		<h:form>
+			<h:messages id="messages" globalOnly="true" closable="true" />
+
+			<p:panelGrid columns="3" id="foo">
+				<h:outputLabel value="Usuario" />
+				<h:inputText id="nickname" value="#{gestionUsuario.usuarioIngresado.nickname}" required="#{!gestionUsuario.varLDAP}" rendered="#{!gestionUsuario.varLDAP}" validatorMessage="El usuario debe ser mayor a 8 caracteres" requiredMessage="Ingrese un usuario" />
+				<h:message for="nickname" style="color:red" rendered="#{!gestionUsuario.varLDAP}" />
+
+				<h:inputText id="nicknameLdap" value="#{gestionUsuario.usuarioLDAP.nickname}" required="#{gestionUsuario.varLDAP}" rendered="#{gestionUsuario.varLDAP}" validatorMessage="El usuario debe ser mayor a 8 caracteres" requiredMessage="Ingrese un usuario" />
+				<h:message for="nicknameLdap" style="color:red" rendered="#{gestionUsuario.varLDAP}" />
+
+				<h:outputLabel value="Contraseña" />
+				<h:inputSecret id="clave" value="#{gestionUsuario.usuarioIngresado.clave}" required="#{!gestionUsuario.varLDAP}" rendered="#{!gestionUsuario.varLDAP}" validatorMessage="La contraseña debe ser mayor a 8 caracteres" requiredMessage="Ingrese una contraseña" />
+				<h:message for="clave" style="color:red" rendered="#{!gestionUsuario.varLDAP}" />
+
+				<h:inputSecret id="claveLdap" value="#{gestionUsuario.usuarioLDAP.clave}" required="#{gestionUsuario.varLDAP}" rendered="#{gestionUsuario.varLDAP}" validatorMessage="La contraseña debe ser mayor a 8 caracteres" requiredMessage="Ingrese una contraseña" />
+				<h:message for="claveLdap" style="color:red" rendered="#{gestionUsuario.varLDAP}" />
+			</p:panelGrid>
+
+			<h:panelGrid columns="3">
+				<h:commandButton value="Ingresar" action="#{gestionUsuario.verificarLogin}" />
+				<p:selectBooleanCheckbox value="#{gestionUsuario.varLDAP}" itemLabel="LDAP">
+					<p:ajax process="@this" update="foo" />
+				</p:selectBooleanCheckbox>
+			</h:panelGrid>
+		</h:form>
+	</ui:define>
+</ui:composition>

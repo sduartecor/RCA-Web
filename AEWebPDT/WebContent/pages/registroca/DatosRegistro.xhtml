@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<ui:composition template="/layout/layout.xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:p="http://primefaces.org/ui">
+	
+	<ui:define name="title">
+		<c:set var="title" value="Datos de Usuario" scope="request" />
+	</ui:define>
+	
+	<ui:define name="content">
+			 
+		<f:metadata>	
+		    <f:viewParam name="id" value="#{gestionRegistro.id}" />
+		    <f:viewParam name="modalidad" value="#{gestionRegistro.modalidad}" />
+		    <f:event type="preRenderView" listener="#{gestionRegistro.preRenderViewListener}"/>
+		</f:metadata>
+
+	<h:form id="idDatosUsuario" >
+		 
+
+    	
+    	<h:commandButton id="idVolver" immediate="true" value="Volver al listado" onclick="redirigirPagina('/AEWeb3/pages/registroca/Registros.xhtml');">
+    	 <f:ajax />
+</h:commandButton>
+    	
+		<h:commandButton id="idModificar"  value="Modificar" rendered="#{!gestionRegistro.modoEdicion}"	onclick="return confirm('Seguro que quieres modificar este usuario?')">
+    			<f:param name="id" value="${gestionRegistro.id}" />
+    			<f:param name="modalidad" value="update" />
+
+		</h:commandButton> 
+		
+		<h:commandButton id="idBorrar"  value="Borrar" rendered="#{!gestion.modoEdicion and gestionUsuario.rolUsuario().equals('Administrador')}"		
+		action="#{gestionRegistro.borrarRegistro()}"  onclick="return confirm('Seguro que quieres borrar este usuario?')">
+    			<f:param name="id" value="${gestionRegistro.id}" />
+    			<f:param name="modalidad" value="remove" />
+		</h:commandButton> 
+		
+		<h:commandButton value="Salvar cambios"	rendered="#{gestionRegistro.modoEdicion}" 
+			update=":form" 	action="#{gestionRegistro.salvarCambios}" >
+		    	<f:param name="id" value="${gestionRegistro.id}" />
+    			<f:param name="modalidad" value="update" />
+    	</h:commandButton>
+	
+		
+	
+	
+			
+		<p:panelGrid columns="3" layout="grid">
+
+			<p:outputLabel  value="Id" />
+			<p:inputText id="id" disabled="true"  value="#{gestionRegistro.registroSeleccionado.id}" />
+			<p:message for="id" style="color:red" />
+			
+				
+			<p:outputLabel value="Método de medición"/>
+			<p:selectOneMenu id="metodo" hideNoSelectionOption="true" disabled="#{!gestionRegistro.modoEdicion}" value="#{gestionRegistro.registroSeleccionado.metodo}" required="true" requiredMessage="Debe seleccionar un método">
+   				<f:selectItem itemLabel="Seleccione un método" noSelectionOption ="true" />
+   				<f:selectItem itemValue="MANUAL" itemLabel="Manual" />
+   				<f:selectItem itemValue="AUTOMÁTICO" itemLabel="Automático" />
+			</p:selectOneMenu>
+			<p:message for="metodo" style="color:red"/>
+			
+			
+			<p:outputLabel disabled="#{!gestionRegistro.edicionFecha}" value="Fecha" />
+			<p:calendar id="fecha" disabled="#{!gestionRegistro.edicionFecha}" showOn="button"  maxdate="#{currentDate}" value="#{gestionRegistro.registroSeleccionado.fecha}" pattern="yyyy-MM-dd" mask="true" validatorMessage="La fecha no puede ser superior a la actual" required="true" requiredMessage="Debe seleccionar una fecha"  />
+			<p:message for="fecha" style="color:red" />
+		
+			
+			
+			<p:outputLabel disabled="#{!gestionRegistro.edicionEstacion}" value="Estacion" />
+			<p:selectOneMenu id="estacion" hideNoSelectionOption="true" disabled="#{!gestionRegistro.edicionEstacion}"   value="#{gestionRegistro.estacionNombre}"  required="true" requiredMessage="Debe seleccionar una estacion"  >
+   				<f:selectItem itemLabel="Seleccione una Estacion" noSelectionOption ="true" />
+   				<f:selectItems value="#{gestionRegistro.listaEstaciones()}" var="e" itemLabel="#{e.nombre}" itemValue="#{e.nombre}"/>
+   			</p:selectOneMenu>
+			<p:message for="estacion" style="color:red"/>
+
+			<p:outputLabel disabled="#{!gestionRegistro.edicionForm}" value="Formulario" />
+			<p:selectOneMenu id="formulario" hideNoSelectionOption="true" disabled="#{!gestionRegistro.edicionForm}"  value="#{gestionRegistro.formularioNombre}"  required="true" requiredMessage="Debe seleccionar un formulario"  >
+   				<p:ajax listener="#{gestionRegistro.viewCasillas()}"  process="@this" update="foo"  />
+   				<f:selectItem itemLabel="Seleccione un Formulario"  noSelectionOption="true" />
+   				<f:selectItems value="#{gestionRegistro.listaFormularios()}" var="f" itemLabel="#{f.nombre}" itemValue="#{f.nombre}"/>
+   			</p:selectOneMenu>
+			<p:message for="formulario" style="color:red"/>
+			
+		
+							
+    	
+    		</p:panelGrid>
+    		
+    		<p:panelGrid columns="3" id="foo" layout="grid" >
+    		
+    		<p:outputLabel disabled="#{!gestionRegistro.varNo2}" value="No2" />
+			<p:inputText id="no2" disabled="#{!gestionRegistro.varNo2}" value="#{gestionRegistro.datoNo2}" required="#{gestionRegistro.varNo2}"  requiredMessage="Debe ingresar un dato"  />
+			<p:message for="no2" style="color:red" />
+			
+			<p:outputLabel disabled="#{!gestionRegistro.varCo2}" value="Co2" />
+			<p:inputText id="co2" disabled="#{!gestionRegistro.varCo2}" value="#{gestionRegistro.datoCo2}" required="#{gestionRegistro.varCo2}"  requiredMessage="Debe ingresar un dato" />
+			<p:message for="co2" style="color:red" />
+			
+			<p:outputLabel disabled="#{!gestionRegistro.varPm25}" value="Pm2,5" />
+			<p:inputText id="pm25" disabled="#{!gestionRegistro.varPm25}" value="#{gestionRegistro.datoPm25}" required="#{gestionRegistro.varPm25}"  requiredMessage="Debe ingresar un dato" />
+			<p:message for="pm25" style="color:red" />
+			
+			<p:outputLabel disabled="#{!gestionRegistro.varPm10}" value="Pm1,0" />
+			<p:inputText id="pm10" disabled="#{!gestionRegistro.varPm10}" value="#{gestionRegistro.datoPm10}" required="#{gestionRegistro.varPm10}"  requiredMessage="Debe ingresar un dato" />
+			<p:message for="pm10" style="color:red" />
+			
+			<p:outputLabel disabled="#{!gestionRegistro.varTemperatura}" value="Temperatura" />
+			<p:inputText id="temperatura" disabled="#{!gestionRegistro.varTemperatura}" value="#{gestionRegistro.datoTemperatura}" required="#{gestionRegistro.varTemperatura}"  requiredMessage="Debe ingresar un dato" />
+			<p:message for="temperatura" style="color:red" />
+			
+			<p:outputLabel disabled="#{!gestionRegistro.varPrecipitacion}" value="Precipitacion" />
+			<p:inputText id="precipitacion" disabled="#{!gestionRegistro.varPrecipitacion}" value="#{gestionRegistro.datoPrecipitacion}" required="#{!gestionRegistro.varPrecipitacion}"  requiredMessage="Debe ingresar un dato" />
+			<p:message for="precipitacion" style="color:red" />
+			
+			
+			
+    		</p:panelGrid>
+    		
+    		
+    		
+    		
+    		
+   
+    		    		<script>
+    function redirigirPagina(url) {
+        window.location.href = url;
+    }
+</script>
+		
+		
+	</h:form>
+
+	
+				 
+			 
+			 
+
+    </ui:define>
+</ui:composition>
+
